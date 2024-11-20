@@ -44,18 +44,35 @@ def display_order(df):
 
 
 
-def total_quantity(df):
-    total_quantity = df["Номер замовлення"].value_counts()
-    print(f"Загальна кількість замовлень: {total_quantity}")
-    return total_quantity
+def analyze_orders(orders):
+    total_orders = len(orders)
+    total_sum = orders['Сума замовлення'].sum()
+    print(f"Загальна кількість замовлень: {total_orders}")
+    print(f"Сумарна вартість замовлень: {total_sum:.2f} грн")
 
-def total_value(df):
-    total = df["Сума замовлення"].sum()
-    print(f"Сумарна вартість всіх замовлень: {total}")
-    return total
+    status_counts = orders['Статус'].value_counts()
+    print("\nКількість замовлень за статусом:")
+    print(status_counts)
+
+    max_order = orders.loc[orders['Сума замовлення'].idxmax()]
+    print(f"\nЗамовлення з найбільшою сумою:\n{max_order}")
 
 
+def visualize_orders(orders):
+    status_counts = orders['Статус'].value_counts()
+    plt.figure(figsize=(6, 6))
+    plt.pie(status_counts, labels=status_counts.index, autopct='%1.1f%%', startangle=140)
+    plt.title("Частка виконаних і невиконаних замовлень")
+    plt.show()
 
+    orders['Дата замовлення'] = pd.to_datetime(orders['Дата замовлення'])
+    plt.figure(figsize=(10, 6))
+    plt.hist(orders['Дата замовлення'].dt.date, bins=10, kde=False)
+    plt.title("Кількість замовлень за датами")
+    plt.xlabel("Дата")
+    plt.ylabel("Кількість замовлень")
+    plt.xticks(rotation=45)
+    plt.show()
 
 
 
@@ -66,8 +83,7 @@ def menu():
     print("3. Оновити замовлення")
     print("4. Видалити замовлення")
     print("5. Показати всі замовлення")
-    print("6. Загальна кількість замовлень")
-    print("7. Сумарна вартість всіх замовлень")
+    print("6. Аналіз замовлень")
     print("0. Вийти")
 
     while True:
@@ -102,8 +118,7 @@ def menu():
             df = add_order(df, name, number, data, sum_ord, status)
             print("Продукт додано")
 
-        elif choice == '3':
-            total_quantity(df)
+
 
 
 
